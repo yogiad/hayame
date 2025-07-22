@@ -11,10 +11,10 @@ st.set_page_config(
     page_icon="💸" # A nice emoji for the browser tab
 )
 
-# --- Custom CSS for better aesthetics ---
+# --- Custom CSS for better aesthetics and Dark Mode Support ---
 st.markdown("""
 <style>
-    /* Main app container styling */
+    /* Base styles (for light mode or general) */
     .stApp {
         background-color: #f0f2f6; /* Light gray background */
         color: #333333; /* Darker text */
@@ -74,6 +74,78 @@ st.markdown("""
         border-radius: 5px;
         padding: 8px;
         border: 1px solid #cccccc;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Dark Mode Specific Styles */
+    /* These styles apply when Streamlit's theme is set to 'dark' */
+    /* ------------------------------------------------------------------ */
+    [data-theme="dark"] .stApp {
+        background-color: #1a1a1a; /* Dark background */
+        color: #e0e0e0; /* Light text */
+    }
+
+    [data-theme="dark"] .stSidebar {
+        background-color: #2b2b2b; /* Darker sidebar */
+        border-right: 1px solid #444444;
+    }
+
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h2,
+    [data-theme="dark"] h3,
+    [data-theme="dark"] h4,
+    [data-theme="dark"] h5,
+    [data-theme="dark"] h6 {
+        color: #f0f0f0; /* Lighter headings */
+    }
+
+    [data-theme="dark"] [data-testid="stMetric"] {
+        background-color: #2b2b2b; /* Darker background for metrics */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        border-left: 5px solid #66bb6a; /* Adjusted green for dark mode */
+    }
+    [data-theme="dark"] [data-testid="stMetric"] label {
+        color: #bbbbbb; /* Lighter label color */
+    }
+    [data-theme="dark"] [data-testid="stMetric"] div[data-testid="stMarkdownContainer"] p {
+        color: #90caf9; /* Lighter blue for values */
+    }
+
+    [data-theme="dark"] .stSuccess {
+        background-color: #388e3c; /* Darker green for success */
+        color: #e0f2f1;
+        border-left: 6px solid #66bb6a;
+    }
+
+    [data-theme="dark"] .stError {
+        background-color: #c62828; /* Darker red for error */
+        color: #ffebee;
+        border-left: 6px solid #ef5350;
+    }
+
+    [data-theme="dark"] .stNumberInput,
+    [data-theme="dark"] .stTextInput {
+        background-color: #333333; /* Darker background for inputs */
+        border: 1px solid #555555;
+        color: #e0e0e0; /* Lighter text for inputs */
+    }
+    /* Text input specifically when focused for better visibility */
+    [data-theme="dark"] .stNumberInput input,
+    [data-theme="dark"] .stTextInput input {
+        color: #e0e0e0; /* Ensure text inside inputs is light */
+    }
+
+    /* Adjusting Streamlit specific elements for dark mode */
+    [data-theme="dark"] .stMarkdown {
+        color: #e0e0e0; /* Ensure general markdown text is light */
+    }
+
+    /* Adjust chart backgrounds for better visibility in dark mode */
+    .js-plotly-plot {
+        background-color: transparent !important; /* Make Plotly background transparent */
+    }
+    .modebar {
+        background-color: transparent !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -170,7 +242,7 @@ else:
         st.metric(label="💼 Net Profit Per Cleaner/Month", value=f"RM {net_profit_per_cleaner_per_month:,.2f}")
     with col_kpi_3:
         st.metric(label="🗓️ Jobs Per Cleaner/Month", value=f"{jobs_per_cleaner_per_month} jobs")
-    
+
     # Calculate Total Jobs Per Month
     total_jobs_per_month = num_cleaners_needed * jobs_per_cleaner_per_month
     with col_kpi_4: # Added this new column
@@ -204,6 +276,8 @@ else:
                      color_discrete_sequence=px.colors.qualitative.Pastel)
     fig_pie.update_traces(textinfo='percent+label', pull=[0, 0, 0, 0.05])
     fig_pie.update_layout(showlegend=True, title_x=0.5) # Center title
+    # Update chart background for dark mode compatibility
+    fig_pie.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig_pie, use_container_width=True)
 
     st.markdown("---")
@@ -242,6 +316,8 @@ else:
                                  annotation_font_color="#C0392B")
     fig_stacked_bar_px.update_layout(showlegend=True, barmode='stack', title_x=0.5,
                                      xaxis={'categoryorder':'array', 'categoryarray':['Monthly Overview']})
+    # Update chart background for dark mode compatibility
+    fig_stacked_bar_px.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig_stacked_bar_px, use_container_width=True)
 
     st.markdown("---")
@@ -276,6 +352,8 @@ else:
         xaxis_title="Financial Measure",
         title_x=0.5 # Center title
     )
+    # Update chart background for dark mode compatibility
+    fig_waterfall.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig_waterfall, use_container_width=True)
 
 # --- Footer ---
